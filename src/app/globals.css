@@ -1,26 +1,202 @@
 @import "tailwindcss";
 
+/*
+ * Default ("Default" theme) tokens — rendered on the server so the first
+ * paint already matches the active theme before client JS hydrates and
+ * `applyThemeToDocument` takes over (see lib/apply-theme.ts).
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --app-background: #f8fafc;
+  --app-background-solid: #f8fafc;
+  --app-surface: #ffffff;
+  --app-surface-hover: rgba(247, 247, 247, 1);
+  --app-foreground: #1a1a1a;
+  --app-muted-foreground: #6b7280;
+  --app-primary: #19b394;
+  --app-primary-foreground: #ffffff;
+  --app-primary-hover: rgba(23, 165, 136, 1);
+  --app-secondary: #6b7280;
+  --app-secondary-foreground: #ffffff;
+  --app-accent: #ff9814;
+  --app-accent-foreground: #1a1a1a;
+  --app-border: #e2e8f0;
+  --app-ring: rgba(25, 179, 148, 0.45);
+  --app-radius: 8px;
+  --app-radius-sm: 4px;
+  --app-radius-lg: 12px;
+  --app-radius-xl: 16px;
+  --app-shadow-color: rgba(15, 23, 42, 0.08);
+  --app-shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.08);
+  --app-shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.08);
+  --app-shadow-lg: 0 16px 40px -8px rgba(15, 23, 42, 0.08);
+  --app-shadow-xl: 0 24px 64px -12px rgba(15, 23, 42, 0.08);
+  --app-blur: 0px;
+  --theme-transition-duration: 200ms;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--app-background-solid);
+  --color-surface: var(--app-surface);
+  --color-surface-hover: var(--app-surface-hover);
+  --color-foreground: var(--app-foreground);
+  --color-muted-foreground: var(--app-muted-foreground);
+  --color-primary: var(--app-primary);
+  --color-primary-foreground: var(--app-primary-foreground);
+  --color-primary-hover: var(--app-primary-hover);
+  --color-secondary: var(--app-secondary);
+  --color-secondary-foreground: var(--app-secondary-foreground);
+  --color-accent: var(--app-accent);
+  --color-accent-foreground: var(--app-accent-foreground);
+  --color-border: var(--app-border);
+  --color-ring: var(--app-ring);
+
+  --radius-theme: var(--app-radius);
+  --radius-theme-sm: var(--app-radius-sm);
+  --radius-theme-lg: var(--app-radius-lg);
+  --radius-theme-xl: var(--app-radius-xl);
+
+  --shadow-theme-sm: var(--app-shadow-sm);
+  --shadow-theme-md: var(--app-shadow-md);
+  --shadow-theme-lg: var(--app-shadow-lg);
+  --shadow-theme-xl: var(--app-shadow-xl);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --app-background: #f8fafc;
   }
 }
 
+* {
+  border-color: var(--app-border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--app-background);
+  color: var(--app-foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Smooth, instant-feeling theme transitions across the whole UI. */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color, box-shadow, opacity;
+  transition-duration: var(--theme-transition-duration);
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Glassmorphism helper for "Glass" / "Gradient" themes. */
+.glass-surface {
+  backdrop-filter: blur(var(--app-blur));
+  -webkit-backdrop-filter: blur(var(--app-blur));
+}
+
+/* Accessible focus ring used throughout the UI. */
+.focus-ring {
+  outline: none;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--app-ring);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--app-primary);
+  color: var(--app-primary-foreground);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--app-border);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--app-muted-foreground);
+}
+
+/*
+ * Every SurveyJS survey rendered in this app (home preview, All Form
+ * Elements cards, theme preview modal, ...): give the Previous / Next /
+ * Complete navigation buttons distinct, purposeful colors and render
+ * selected rating items as a filled checkmark, similar to a real-world
+ * paged NPS/CSAT survey.
+ */
+.sd-navigation__prev-btn {
+  background-color: #1e3a5f;
+  color: #ffffff;
+}
+
+.sd-navigation__prev-btn:hover {
+  background-color: #16314f;
+  color: #ffffff;
+}
+
+.sd-navigation__next-btn {
+  background-color: var(--sjs-primary-backcolor, var(--app-primary));
+  color: var(--sjs-primary-forecolor, var(--app-primary-foreground));
+}
+
+.sd-navigation__next-btn:hover {
+  background-color: var(--sjs-primary-backcolor-dark, var(--app-primary-hover));
+  color: var(--sjs-primary-forecolor, var(--app-primary-foreground));
+}
+
+.sd-navigation__complete-btn {
+  background-color: #94a3b8;
+  color: #ffffff;
+}
+
+.sd-navigation__complete-btn:hover {
+  background-color: #64748b;
+  color: #ffffff;
+}
+
+.sd-rating__item--selected .sd-rating__item-text {
+  visibility: hidden;
+}
+
+.sd-rating__item--selected::after {
+  content: "\2713";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
 }
